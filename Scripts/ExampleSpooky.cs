@@ -17,7 +17,6 @@ public class ExampleSpooky : MonoBehaviour
     void Start()
     {
         reloaded = false;
-        print(this.gameObject.name);
     }
 
     // Update is called once per frame
