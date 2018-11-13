@@ -36,6 +36,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4987100980214592}
+  - component: {fileID: 114499594976555432}
   m_Layer: 0
   m_Name: Explosion
   m_TagString: Untagged
@@ -529,6 +530,17 @@ MonoBehaviour:
   GraphIntensityMultiplier: 1
   IsLoop: 0
   UseSharedMaterial: 0
+--- !u!114 &114499594976555432
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1142776467000296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 140e29913073d42459e91f43fb6e75fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114783525060018542
 MonoBehaviour:
   m_ObjectHideFlags: 1

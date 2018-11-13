@@ -43,7 +43,11 @@ public class Manager : MonoBehaviour
     {
         if (gesture.mano_gesture_continuous == ManoGestureContinuous.CLOSED_HAND_GESTURE)
         {
-            Invoke("Reload", 1f);
+            if(reloading == false)
+            {
+                reloading = true;
+                Invoke("Reload", 1f);
+            }
             //Handheld.Vibrate();
             Vector3 boundingBoxCenter = tracking.bounding_box_center;
             boundingBoxCenter.z = 10f;
@@ -52,11 +56,6 @@ public class Manager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Based on the continuous gesture performed (Open hand or Closed Hand) the ghost will change its appearance
-    /// </summary>
-    /// <param name="gesture">Gesture.</param>
-    /// <param name="warning">Warning.</param>
     void ShootProjectiles(ManoGestureTrigger someGesture)
     {
         if (someGesture == shootGesture && reloaded == true)
@@ -71,7 +70,6 @@ public class Manager : MonoBehaviour
     void Reload()
     {
         holdAnimation.SetActive(true);
-        reloading = true;
         reloaded = true;
     }
 

@@ -15,7 +15,7 @@ public class GyroControl : MonoBehaviour {
         cameraContainer = new GameObject("Camera Container");
         cameraContainer.transform.position = transform.position;
         transform.SetParent(cameraContainer.transform);
-        //gyroEnabled = EnableGyro();
+        gyroEnabled = EnableGyro();
     }
 
     private void Update()
