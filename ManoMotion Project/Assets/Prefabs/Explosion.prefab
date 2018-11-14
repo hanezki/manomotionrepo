@@ -36,7 +36,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4987100980214592}
-  - component: {fileID: 114499594976555432}
+  - component: {fileID: 114155820020324728}
   m_Layer: 0
   m_Name: Explosion
   m_TagString: Untagged
@@ -530,7 +530,7 @@ MonoBehaviour:
   GraphIntensityMultiplier: 1
   IsLoop: 0
   UseSharedMaterial: 0
---- !u!114 &114499594976555432
+--- !u!114 &114155820020324728
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}

@@ -6,12 +6,14 @@ public class Manager : MonoBehaviour
 {
     public GameObject projectilePrefab;
     public Transform projectileSpawn;
-    public Transform testSpawn;
+    public GameObject target;
 
     public GameObject holdAnimation;
 
     public ManoGestureTrigger shootGesture;
     public ManoGestureTrigger closeHand;
+
+    private List<GameObject> targetSpawns = new List<GameObject>();
 
     private bool reloaded;
     private bool reloading;
@@ -19,9 +21,15 @@ public class Manager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        var projectile = (GameObject)Instantiate(projectilePrefab, testSpawn.position, testSpawn.rotation);
+        var projectile = (GameObject)Instantiate(projectilePrefab, projectileSpawn.position, projectileSpawn.rotation);
         reloading = false;
         reloaded = false;
+        targetSpawns.AddRange(GameObject.FindGameObjectsWithTag("Spawn"));
+        
+        for(int i=0; i < targetSpawns.Count; i++)
+        {
+            Instantiate(target, targetSpawns[i].transform);
+        }
     }
 
     // Update is called once per frame
@@ -33,10 +41,6 @@ public class Manager : MonoBehaviour
         //Warning warning = ManomotionManager.Instance.Hand_infos[0].hand_info.warning;
         ContinuousGesture(gesture, trackingInfo);
         ShootProjectiles(someGesture);
-
-        if(reloading == true)
-        {
-        }
     }
 
     void ContinuousGesture(GestureInfo gesture, TrackingInfo tracking)
@@ -48,7 +52,7 @@ public class Manager : MonoBehaviour
                 reloading = true;
                 Invoke("Reload", 1f);
             }
-            //Handheld.Vibrate();
+            Handheld.Vibrate();
             Vector3 boundingBoxCenter = tracking.bounding_box_center;
             boundingBoxCenter.z = 10f;
             projectileSpawn.transform.position = Camera.main.ViewportToWorldPoint(boundingBoxCenter);
@@ -56,6 +60,11 @@ public class Manager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Based on the continuous gesture performed (Open hand or Closed Hand) the ghost will change its appearance
+    /// </summary>
+    /// <param name="gesture">Gesture.</param>
+    /// <param name="warning">Warning.</param>
     void ShootProjectiles(ManoGestureTrigger someGesture)
     {
         if (someGesture == shootGesture && reloaded == true)
