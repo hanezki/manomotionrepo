@@ -17,10 +17,12 @@ public class Manager : MonoBehaviour
 
     private bool reloaded;
     private bool reloading;
+    private bool openHand;
 
     // Use this for initialization
     void Start()
     {
+        openHand = false;
         var projectile = (GameObject)Instantiate(projectilePrefab, projectileSpawn.position, projectileSpawn.rotation);
         reloading = false;
         reloaded = false;
@@ -38,25 +40,43 @@ public class Manager : MonoBehaviour
         TrackingInfo trackingInfo = ManomotionManager.Instance.Hand_infos[0].hand_info.tracking_info;
         GestureInfo gesture = ManomotionManager.Instance.Hand_infos[0].hand_info.gesture_info;
         ManoGestureTrigger someGesture = gesture.mano_gesture_trigger;
-        //Warning warning = ManomotionManager.Instance.Hand_infos[0].hand_info.warning;
-        ContinuousGesture(gesture, trackingInfo);
-        ShootProjectiles(someGesture);
+        Warning warning = ManomotionManager.Instance.Hand_infos[0].hand_info.warning;
+        ContinuousGesture(gesture, trackingInfo, warning);
+        ShootProjectiles(someGesture, warning);
     }
 
-    void ContinuousGesture(GestureInfo gesture, TrackingInfo tracking)
+    void ContinuousGesture(GestureInfo gesture, TrackingInfo tracking, Warning warning)
     {
-        if (gesture.mano_gesture_continuous == ManoGestureContinuous.CLOSED_HAND_GESTURE)
+        if (warning != Warning.WARNING_HAND_NOT_FOUND)
         {
-            if(reloading == false)
+            //found hand
+            if (gesture.mano_gesture_continuous == ManoGestureContinuous.CLOSED_HAND_GESTURE)
             {
-                reloading = true;
-                Invoke("Reload", 1f);
+                openHand = false;
+                if (reloading == false)
+                {
+                    reloading = true;
+                    Invoke("Reload", 1f);
+                }
+                Vector3 boundingBoxCenter = tracking.bounding_box_center;
+                Vector3 projectileSpawnPoint = boundingBoxCenter;
+
+                Vector3 holdAnimationPoint = boundingBoxCenter;
+                holdAnimationPoint.z = 0.5f;
+
+                projectileSpawnPoint.z = 5f;
+                boundingBoxCenter.z = 3f;
+                projectileSpawn.transform.position = Camera.main.ViewportToWorldPoint(projectileSpawnPoint);
+                holdAnimation.transform.position = Camera.main.ViewportToWorldPoint(holdAnimationPoint);
             }
-            Handheld.Vibrate();
-            Vector3 boundingBoxCenter = tracking.bounding_box_center;
-            boundingBoxCenter.z = 10f;
-            projectileSpawn.transform.position = Camera.main.ViewportToWorldPoint(boundingBoxCenter);
-            holdAnimation.transform.position = Camera.main.ViewportToWorldPoint(boundingBoxCenter);
+        }
+
+        else
+        {
+            reloading = false;
+            reloaded = false;
+            openHand = false;
+            holdAnimation.SetActive(false);
         }
     }
 
@@ -65,21 +85,32 @@ public class Manager : MonoBehaviour
     /// </summary>
     /// <param name="gesture">Gesture.</param>
     /// <param name="warning">Warning.</param>
-    void ShootProjectiles(ManoGestureTrigger someGesture)
+    void ShootProjectiles(ManoGestureTrigger someGesture, Warning warning)
     {
-        if (someGesture == shootGesture && reloaded == true)
+        if(someGesture == shootGesture)
         {
-            holdAnimation.SetActive(false);
-            var projectile = (GameObject)Instantiate(projectilePrefab, projectileSpawn.position, projectileSpawn.rotation);
-            reloaded = false;
-            reloading = false;
+            openHand = true;
+            if (reloaded == true)
+            {
+                holdAnimation.SetActive(false);
+                var projectile = (GameObject)Instantiate(projectilePrefab, projectileSpawn.position, projectileSpawn.rotation);
+                reloaded = false;
+                reloading = false;
+            }
         }
+       
     }
     
     void Reload()
     {
-        holdAnimation.SetActive(true);
-        reloaded = true;
+        if(!reloading == false && !openHand == true)
+        {
+            holdAnimation.SetActive(true);
+            reloaded = true;
+        }
+        else
+        {
+            reloading = false;
+        }
     }
-
 }
